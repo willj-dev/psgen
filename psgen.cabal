@@ -1,9 +1,10 @@
+cabal-version:       3.0
 name:                psgen
 version:             0.1.0.0
 -- synopsis:
 -- description:
 homepage:            https://github.com/githubuser/psgen#readme
-license:             BSD3
+license:             BSD-3-Clause
 license-file:        LICENSE
 author:              Author name here
 maintainer:          example@example.com
@@ -12,11 +13,22 @@ category:            Web
 build-type:          Simple
 extra-source-files:  README.md
                      CHANGELOG.md
-cabal-version:       >=1.10
+
+common deps
+  build-depends: polysemy, polysemy-plugin
+  default-extensions:
+    DataKinds, FlexibleContexts, GADTs, LambdaCase, PolyKinds, RankNTypes, ScopedTypeVariables, TypeApplications,
+    TypeOperators, TypeFamilies
+  ghc-options: -O2 -flate-specialise -fspecialise-aggressively -fplugin=Polysemy.Plugin
 
 library
+  import:              deps
   hs-source-dirs:      src
-  exposed-modules:     Data.String.Strip
+  exposed-modules:     PSGen.Problem
+                     , PSGen.Problems.Quadratic
+                     , PSGen.Math.FactorInteger
+                     , PSGen.Math.Radical
+                     , PSGen.Math.Quadratic
   build-depends:       base >= 4.7 && < 5
   default-language:    Haskell2010
   ghc-options:         -Wall
@@ -30,6 +42,7 @@ library
                        -Wredundant-constraints
 
 executable psgen
+  import:              deps
   hs-source-dirs:      app
   main-is:             Main.hs
   build-depends:       base
@@ -49,10 +62,13 @@ executable psgen
                        -with-rtsopts=-N
 
 test-suite psgen-test
+  import:              deps
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
-  other-modules:       Data.String.StripSpec
+  other-modules:       PSGen.Math.FactorIntegerSpec
+                     , PSGen.Math.RadicalSpec
+                     , PSGen.Math.QuadraticSpec
   build-depends:       base
                      , psgen
                      , hspec
